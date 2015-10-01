@@ -50,14 +50,6 @@ def snr_vals(snr_total, chans, spec_index, xoff_arcmin=0, yoff_arcmin=0):
     return (on_axis_vals.T * all_beam_signals(xoff_arcmin, yoff_arcmin, chans)).T
 
 
-# function to draw the circles that indicate where the beams are
-def draw_fwhm_circle(ax, xy, fwhm1, fwhm2, alpha=1.):
-    outer_r = 0.5*max(fwhm1, fwhm2)
-    inner_r = 0.5*min(fwhm1, fwhm2)
-    ax.add_patch(_Circle(xy, outer_r, fc="0.95", lw=0, zorder=-100, alpha=alpha))
-    ax.add_patch(_Circle(xy, inner_r, fc="0.90", lw=0, zorder=-99, alpha=alpha))
-
-
 # since these are relative signals, the centre beam is always 1, so the error is 1/snr_centre
 def observed_relative_signals(x, y, spec_index, chans):
     nchan = _np.array(chans).size

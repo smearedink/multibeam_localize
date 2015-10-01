@@ -16,6 +16,13 @@ alphas = _np.linspace(0, 0.8, image_cmap.N+3)
 image_cmap._lut[:,-1] = alphas
 
 
+# function to draw the circles that indicate where the beams are
+def _draw_fwhm_circle(ax, xy, fwhm1, fwhm2, alpha=1.):
+    outer_r = 0.5*max(fwhm1, fwhm2)
+    inner_r = 0.5*min(fwhm1, fwhm2)
+    ax.add_patch(Circle(xy, outer_r, fc="0.95", lw=0, zorder=-100, alpha=alpha))
+    ax.add_patch(Circle(xy, inner_r, fc="0.90", lw=0, zorder=-99, alpha=alpha))
+
 def plot_mcmc_results(sampled_mcmc, bins=20, smooth=None, truths=None):
     """
     Uses the 'corner' package to make a *sick* corner plot showing the
@@ -54,7 +61,7 @@ def plot_mcmc_beam_map(sampled_mcmc, bins=50, true_xy=None):
     fig = _plt.figure(figsize=(6,6))
     ax = fig.add_subplot(111)
     for ii in range(len(offsets)):
-        draw_fwhm_circle(ax, offsets[ii], beam_fwhm(400), beam_fwhm(800))
+        _draw_fwhm_circle(ax, offsets[ii], beam_fwhm(400), beam_fwhm(800))
     prob_plot = ax.pcolorfast(x_bins, y_bins, xy_hist.T, cmap=image_cmap)
     ax.contour(0.5*(x_bins[:-1]+x_bins[1:]), 0.5*(y_bins[:-1]+y_bins[1:]),\
       xy_hist.T, (val68, val95, val99), colors='black',\
