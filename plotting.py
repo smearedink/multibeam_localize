@@ -20,8 +20,8 @@ image_cmap._lut[:,-1] = alphas
 def _draw_fwhm_circle(ax, xy, fwhm1, fwhm2, alpha=1.):
     outer_r = 0.5*max(fwhm1, fwhm2)
     inner_r = 0.5*min(fwhm1, fwhm2)
-    ax.add_patch(Circle(xy, outer_r, fc="0.95", lw=0, zorder=-100, alpha=alpha))
-    ax.add_patch(Circle(xy, inner_r, fc="0.90", lw=0, zorder=-99, alpha=alpha))
+    ax.add_patch(_Circle(xy, outer_r, fc="0.95", lw=0, zorder=-100, alpha=alpha))
+    ax.add_patch(_Circle(xy, inner_r, fc="0.90", lw=0, zorder=-99, alpha=alpha))
 
 def plot_mcmc_results(sampled_mcmc, bins=20, smooth=None, truths=None):
     """
