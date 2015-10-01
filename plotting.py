@@ -23,6 +23,22 @@ def _draw_fwhm_circle(ax, xy, fwhm1, fwhm2, alpha=1.):
     ax.add_patch(_Circle(xy, outer_r, fc="0.95", lw=0, zorder=-100, alpha=alpha))
     ax.add_patch(_Circle(xy, inner_r, fc="0.90", lw=0, zorder=-99, alpha=alpha))
 
+
+def _gaussian(x, loc, amp, sigma):
+    return amp * _np.exp(-0.5*pow((x-loc)/sigma, 2))
+
+def _make_data(offsets_index, chans, nsamp, snr_total, spec_index, xoff_arcmin, yoff_arcmin):
+    nchan = len(chans)
+    times = _np.linspace(0, 1, nsamp, endpoint=False)
+    snrs = snr_vals(snr_total, chans, spec_index, xoff_arcmin, yoff_arcmin)
+    dat = _np.random.normal(loc=0., scale=1., size=(nchan, nsamp))
+
+    for ii in range(nchan):
+        dat[ii] += _gaussian(times, 0.5, snrs[ii][offsets_index], 0.01)
+
+    return times, dat
+
+
 def plot_mcmc_results(sampled_mcmc, bins=20, smooth=None, truths=None):
     """
     Uses the 'corner' package to make a *sick* corner plot showing the
@@ -130,7 +146,7 @@ def plot9waterfalls(snr_total, chans, nsamp, x, y, spec_index):
         else:
             y_index = 1
             
-        times, dat = make_data(ii, chans, nsamp, snr_total, spec_index, x, y)
+        times, dat = _make_data(ii, chans, nsamp, snr_total, spec_index, x, y)
         ax = _plt.subplot2grid((3,3), (y_index, x_index))
         ax.pcolormesh(times, chans, dat, cmap='bone_r')
         ax.axis('off')

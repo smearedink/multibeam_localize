@@ -7,24 +7,6 @@ from beam_func import beam_signal, beam_sep, offsets, centre_beam_index
 
 import plotting
 
-def gaussian(x, loc, amp, sigma):
-    return amp * _np.exp(-0.5*pow((x-loc)/sigma, 2))
-
-def make_data(offsets_index, chans, nsamp, snr_total, spec_index, xoff_arcmin, yoff_arcmin):
-    nchan = len(chans)
-    
-    times = _np.linspace(0, 1, nsamp, endpoint=False)
-    
-    snrs = snr_vals(snr_total, chans, spec_index, xoff_arcmin, yoff_arcmin)
-    
-    dat = _np.random.normal(loc=0., scale=1., size=(nchan, nsamp))
-
-    for ii in range(nchan):
-        dat[ii] += gaussian(times, 0.5, snrs[ii][offsets_index], 0.01)
-        
-    return times, dat
-
-
 def all_beam_signals(x, y, freq=400.):
     return _np.squeeze(beam_signal(_np.array(x)[..., _np.newaxis]-offsets[:,0][_np.newaxis, ...],
                                   _np.array(y)[..., _np.newaxis]-offsets[:,1][_np.newaxis, ...],
