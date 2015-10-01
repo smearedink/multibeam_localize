@@ -24,21 +24,6 @@ def _draw_fwhm_circle(ax, xy, fwhm1, fwhm2, alpha=1.):
     ax.add_patch(_Circle(xy, inner_r, fc="0.90", lw=0, zorder=-99, alpha=alpha))
 
 
-def _gaussian(x, loc, amp, sigma):
-    return amp * _np.exp(-0.5*pow((x-loc)/sigma, 2))
-
-def _make_data(offsets_index, chans, nsamp, snr_total, spec_index, xoff_arcmin, yoff_arcmin):
-    nchan = len(chans)
-    times = _np.linspace(0, 1, nsamp, endpoint=False)
-    snrs = snr_vals(snr_total, chans, spec_index, xoff_arcmin, yoff_arcmin)
-    dat = _np.random.normal(loc=0., scale=1., size=(nchan, nsamp))
-
-    for ii in range(nchan):
-        dat[ii] += _gaussian(times, 0.5, snrs[ii][offsets_index], 0.01)
-
-    return times, dat
-
-
 def plot_mcmc_results(sampled_mcmc, bins=20, smooth=None, truths=None):
     """
     Uses the 'corner' package to make a *sick* corner plot showing the
@@ -123,32 +108,4 @@ def plot_mcmc_traces(sampled_mcmc, true_xy=None, true_spec_index=None):
     ax3.set_ylabel('spectral index')
     ax3.set_xlim(0, len(spec_index_results))
     
-    return fig
-
-
-def plot9waterfalls(snr_total, chans, nsamp, x, y, spec_index):
-    fig = _plt.figure(figsize=(6,6))
-    fig.subplots_adjust(wspace=0.05, hspace=0.05)
-    
-    for ii in range(9):
-        this_x, this_y = offsets[ii]
-        if this_x < -0.001:
-            x_index = 0
-        elif this_x > 0.001:
-            x_index = 2
-        else:
-            x_index = 1
-            
-        if this_y < -0.001:
-            y_index = 2
-        elif this_y > 0.001:
-            y_index = 0
-        else:
-            y_index = 1
-            
-        times, dat = _make_data(ii, chans, nsamp, snr_total, spec_index, x, y)
-        ax = _plt.subplot2grid((3,3), (y_index, x_index))
-        ax.pcolormesh(times, chans, dat, cmap='bone_r')
-        ax.axis('off')
-
     return fig
